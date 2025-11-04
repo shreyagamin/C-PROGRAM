@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int info;
+    struct node *prev;
+    struct node *next;
+} *NODE;
+
+NODE last = NULL; // points to the last node
+
+// Function to create a new node
+NODE getNode(int data) {
+    NODE newNode = (NODE)malloc(sizeof(struct node));
+    newNode->info = data;
+    newNode->prev = newNode->next = newNode; // circular links
+    return newNode;
+}
+
+// Insert at front
+void insertFront(int data) {
+    NODE newNode = getNode(data);
+
+    if (last == NULL) { // first node
+        last = newNode;
+    } else {
+        NODE first = last->next;
+        newNode->next = first;
+        newNode->prev = last;
+        first->prev = newNode;
+        last->next = newNode;
+    }
+
+    printf("%d inserted at front\n", data);
+}
+
+// Insert at rear
+void insertRear(int data) {
+    NODE newNode = getNode(data);
+
+    if (last == NULL) { // empty list
+        last = newNode;
+    } else {
+        NODE first = last->next;
+        newNode->next = first;
+        newNode->prev = last;
+        first->prev = newNode;
+        last->next = newNode;
+        last = newNode; // update last
+    }
+
+    printf("%d inserted at rear\n", data);
+}
+
+// Delete from front
+void deleteFront() {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE first = last->next;
+
+    if (first == last) { // only one node
+        printf("%d deleted from front\n", first->info);
+        free(first);
+        last = NULL;
+    } else {
+        printf("%d deleted from front\n", first->info);
+        last->next = first->next;
+        first->next->prev = last;
+        free(first);
+    }
+}
+
+// Delete from rear
+void deleteRear() {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE first = last->next;
+
+    if (first == last) { // only one node
+        printf("%d deleted from rear\n", last->info);
+        free(last);
+        last = NULL;
+    } else {
+        printf("%d deleted from rear\n", last->info);
+        last->prev->next = first;
+        first->prev = last->prev;
+        NODE temp = last;
+        last = last->prev;
+        free(temp);
+    }
+}
+
+// Display forward
+void displayForward() {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE cur = last->next;
+    printf("CDLL (Forward): ");
+    do {
+        printf("%d <-> ", cur->info);
+        cur = cur->next;
+    } while (cur != last->next);
+    printf("(back to start)\n");
+}
+
+// Display backward
+void displayBackward() {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE cur = last;
+    printf("CDLL (Backward): ");
+    do {
+        printf("%d <-> ", cur->info);
+        cur = cur->prev;
+    } while (cur != last);
+    printf("(back to end)\n");
+}
+
+// Main function
+int main() {
+    int choice, data;
+
+    while (1) {
+        printf("\n--- Circular Doubly Linked List Menu ---\n");
+        printf("1. Insert Front\n2. Insert Rear\n3. Delete Front\n4. Delete Rear\n5. Display Forward\n6. Display Backward\n7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data: ");
+                scanf("%d", &data);
+                insertFront(data);
+                break;
+            case 2:
+                printf("Enter data: ");
+                scanf("%d", &data);
+                insertRear(data);
+                break;
+            case 3:
+                deleteFront();
+                break;
+            case 4:
+                deleteRear();
+                break;
+            case 5:
+                displayForward();
+                break;
+            case 6:
+                displayBackward();
+                break;
+            case 7:
+                exit(0);
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+
+    return 0;
+}
