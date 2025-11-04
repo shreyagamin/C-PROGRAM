@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int info;
+    struct node *next;
+} *NODE;
+
+NODE head = NULL; // header node
+
+// Function to create a new node
+NODE getNode(int data) {
+    NODE newNode = (NODE)malloc(sizeof(struct node));
+    newNode->info = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Initialize header node
+void initList() {
+    head = (NODE)malloc(sizeof(struct node));
+    head->info = 0;      // dummy value
+    head->next = head;   // points to itself initially
+}
+
+// Insert at front
+void insertFront(int data) {
+    NODE newNode = getNode(data);
+    newNode->next = head->next;
+    head->next = newNode;
+    printf("%d inserted at front\n", data);
+}
+
+// Insert at rear
+void insertRear(int data) {
+    NODE newNode = getNode(data);
+    NODE cur = head;
+
+    while (cur->next != head) // traverse till last node
+        cur = cur->next;
+
+    cur->next = newNode;
+    newNode->next = head;
+    printf("%d inserted at rear\n", data);
+}
+
+// Delete from front
+void deleteFront() {
+    if (head->next == head) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE temp = head->next;
+    head->next = temp->next;
+    printf("%d deleted from front\n", temp->info);
+    free(temp);
+}
+
+// Delete from rear
+void deleteRear() {
+    if (head->next == head) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE cur = head, prev = NULL;
+
+    while (cur->next != head) {
+        prev = cur;
+        cur = cur->next;
+    }
+
+    printf("%d deleted from rear\n", cur->info);
+    prev->next = head;
+    free(cur);
+}
+
+// Display list
+void display() {
+    if (head->next == head) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE cur = head->next;
+    printf("Circular Linked List: ");
+    while (cur != head) {
+        printf("%d -> ", cur->info);
+        cur = cur->next;
+    }
+    printf("(back to head)\n");
+}
+
+// Main
+int main() {
+    int choice, data;
+    initList(); // create header node
+
+    while (1) {
+        printf("\n--- Circular Linked List (Header Node) Menu ---\n");
+        printf("1. Insert Front\n2. Insert Rear\n3. Delete Front\n4. Delete Rear\n5. Display\n6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data: ");
+                scanf("%d", &data);
+                insertFront(data);
+                break;
+            case 2:
+                printf("Enter data: ");
+                scanf("%d", &data);
+                insertRear(data);
+                break;
+            case 3:
+                deleteFront();
+                break;
+            case 4:
+                deleteRear();
+                break;
+            case 5:
+                display();
+                break;
+            case 6:
+                exit(0);
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+    return 0;
+}

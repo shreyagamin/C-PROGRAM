@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int info;
+    struct node *next;
+} *NODE;
+
+NODE head = NULL; // header node (does not store actual data)
+
+// Function to create a new node
+NODE getNode(int data) {
+    NODE newNode = (NODE)malloc(sizeof(struct node));
+    newNode->info = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Insert at front
+void insertFront(int data) {
+    NODE newNode = getNode(data);
+    newNode->next = head->next; // link new node after header
+    head->next = newNode;
+    printf("%d inserted at front\n", data);
+}
+
+// Insert at rear
+void insertRear(int data) {
+    NODE newNode = getNode(data);
+    NODE cur = head;
+
+    // move till last node
+    while (cur->next != NULL)
+        cur = cur->next;
+
+    cur->next = newNode;
+    printf("%d inserted at rear\n", data);
+}
+
+// Delete from front
+void deleteFront() {
+    if (head->next == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE temp = head->next;
+    printf("%d deleted from front\n", temp->info);
+    head->next = temp->next;
+    free(temp);
+}
+
+// Delete from rear
+void deleteRear() {
+    if (head->next == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE cur = head;
+    while (cur->next->next != NULL) // stop at second last node
+        cur = cur->next;
+
+    NODE temp = cur->next;
+    printf("%d deleted from rear\n", temp->info);
+    cur->next = NULL;
+    free(temp);
+}
+
+// Display list
+void display() {
+    if (head->next == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    NODE cur = head->next;
+    printf("Linked List: ");
+    while (cur != NULL) {
+        printf("%d -> ", cur->info);
+        cur = cur->next;
+    }
+    printf("NULL\n");
+}
+
+// Main
+int main() {
+    int choice, data;
+
+    // create header node
+    head = (NODE)malloc(sizeof(struct node));
+    head->next = NULL; // initially empty list
+
+    while (1) {
+        printf("\n--- MENU (Header Node) ---\n");
+        printf("1. Insert Front\n2. Insert Rear\n3. Delete Front\n4. Delete Rear\n5. Display\n6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data: ");
+                scanf("%d", &data);
+                insertFront(data);
+                break;
+            case 2:
+                printf("Enter data: ");
+                scanf("%d", &data);
+                insertRear(data);
+                break;
+            case 3:
+                deleteFront();
+                break;
+            case 4:
+                deleteRear();
+                break;
+            case 5:
+                display();
+                break;
+            case 6:
+                exit(0);
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+    return 0;
+}
